@@ -1,0 +1,178 @@
+Eye Tracking System - Function Review
+====================================
+
+This document provides a detailed explanation of each function in the eye tracking system and its importance in the overall program.
+
+1. __init__
+-----------
+Purpose: Initializes all necessary components
+Importance: Sets up MediaPipe for face detection, camera capture, and defines eye landmark indices
+Key Features: 
+- Configures camera resolution
+- Initializes data structures for calibration and tracking
+- Sets up MediaPipe face mesh
+- Defines eye landmark indices for iris and eye contours
+
+2. get_iris_center
+-----------------
+Purpose: Calculates the center point of the iris
+Importance: Essential for determining where the user is looking
+How it works: Takes eye landmarks and computes the average position
+Input: 
+- landmarks: MediaPipe face landmarks
+- eye_indices: Indices of eye contour points
+Output: Center coordinates of the iris
+
+3. get_horizontal_gaze
+---------------------
+Purpose: Determines horizontal gaze direction
+Importance: Calculates how far left/right the user is looking
+How it works: 
+- Compares iris position to eye center
+- Normalizes by eye width
+- Returns value between -1 (left) and 1 (right)
+Input: Face landmarks and eye/iris indices
+Output: Normalized horizontal gaze value
+
+4. get_vertical_gaze
+-------------------
+Purpose: Determines vertical gaze direction
+Importance: Calculates how far up/down the user is looking
+How it works: 
+- Similar to horizontal gaze
+- Uses vertical measurements
+- Returns value between -1 (up) and 1 (down)
+Input: Face landmarks and eye/iris indices
+Output: Normalized vertical gaze value
+
+5. get_eye_aspect_ratio
+----------------------
+Purpose: Calculates eye aspect ratio (EAR)
+Importance: Detects blinks and eye openness
+How it works: 
+- Measures the ratio of eye height to width
+- Uses three key measurements:
+  * A: Vertical distance between points 1 and 5
+  * B: Vertical distance between points 2 and 4
+  * C: Horizontal distance between points 0 and 3
+- EAR = (A + B) / (2.0 * C)
+Input: Face landmarks and eye indices
+Output: Eye aspect ratio value
+
+6. detect_gaze_direction
+-----------------------
+Purpose: Main function for gaze detection
+Importance: Combines all eye tracking measurements
+How it works: 
+- Processes both eyes
+- Returns comprehensive gaze data including:
+  * Horizontal gaze
+  * Vertical gaze
+  * Eye aspect ratio
+  * Iris center positions
+Input: Face landmarks
+Output: Dictionary containing all gaze measurements
+
+7. calculate_gaze_position
+-------------------------
+Purpose: Converts gaze direction to screen coordinates
+Importance: Maps eye movements to screen position
+How it works: 
+- Uses gaze data and screen dimensions
+- Applies smoothing with history buffer
+- Converts normalized gaze values to pixel coordinates
+Input: Gaze data dictionary
+Output: Screen coordinates (x, y)
+
+8. draw_calibration_ui
+---------------------
+Purpose: Creates calibration interface
+Importance: Guides user through calibration process
+How it works: 
+- Draws calibration points
+- Shows progress bar
+- Displays instructions
+- Provides visual feedback
+Input: Video frame
+Output: Updated frame with UI elements
+
+9. draw_tracking_ui
+------------------
+Purpose: Creates tracking interface
+Importance: Shows real-time gaze information
+How it works: 
+- Displays gaze data
+- Shows position indicator
+- Provides control instructions
+- Updates in real-time
+Input: Video frame and gaze data
+Output: Updated frame with tracking UI
+
+10. save_calibration_data
+------------------------
+Purpose: Data persistence for calibration
+Importance: Saves calibration data for later use
+How it works: 
+- Stores data in JSON format
+- Uses timestamps for unique filenames
+- Saves to calibration_data directory
+Input: None (uses class data)
+Output: JSON file with calibration data
+
+11. save_training_data
+---------------------
+Purpose: Data persistence for training
+Importance: Saves training data for model development
+How it works: 
+- Stores data in JSON format
+- Uses timestamps for unique filenames
+- Saves to training_data directory
+Input: None (uses class data)
+Output: JSON file with training data
+
+12. run
+-------
+Purpose: Main program loop
+Importance: Coordinates all system components
+How it works: 
+- Processes video frames
+- Handles user input
+- Updates display
+- Manages program flow
+- Coordinates between calibration and tracking modes
+Input: None
+Output: None (runs until terminated)
+
+System Workflow
+==============
+The system operates in the following sequence:
+
+1. Initialization
+   - Set up camera and MediaPipe
+   - Initialize data structures
+   - Create necessary directories
+
+2. Calibration Mode
+   - Display calibration points
+   - Collect user gaze data
+   - Save calibration data
+
+3. Tracking Mode
+   - Process video frames
+   - Detect gaze direction
+   - Calculate screen position
+   - Display tracking UI
+   - Collect training data
+
+4. Data Collection
+   - Save calibration data
+   - Save training data
+   - Organize by timestamps
+
+5. User Interface
+   - Real-time visualization
+   - Interactive controls
+   - Progress indicators
+   - Status information
+
+This system provides a complete solution for eye tracking, from calibration to data collection, with a focus on user interaction and data persistence. 
